@@ -1,2 +1,13 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<script>
+  import { onMount } from 'svelte';
+  import { goto } from '$app/navigation';
+  import { sesion } from '#lib/stores/sesion.js';
+  import Cargando from '#lib/components/Cargando.svelte';
+
+  onMount(() => {
+    const primero = $sesion?.modulos?.[0]?.ruta_url;
+    goto(primero || '/login', { replaceState: true });
+  });
+</script>
+
+<Cargando texto="Redirigiendo..." />
