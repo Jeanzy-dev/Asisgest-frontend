@@ -3,6 +3,7 @@
   import Campo from '#lib/components/Campo.svelte';
   import Icono from '#lib/components/Icono.svelte';
   import { iniciarSesion, obtenerModulosPorPerfil } from '#lib/services/api_auth.js';
+  import { asegurarPerfilesBase } from '#lib/services/api_perfil.js';
   import { sesion } from '#lib/stores/sesion.js';
 
   let correo = '';
@@ -17,7 +18,11 @@
     try {
       const respuesta = await iniciarSesion(correo, password);
       sesion.set({ token: respuesta.access_token, usuario: respuesta.usuario, modulos: [] });
-      const modulos = await obtenerModulosPorPerfil(respuesta.usuario.id_perfil);
+      let modulos = await obtenerModulosPorPerfil(respuesta.usuario.id_perfil);
+      if (modulos.length === 0) {
+        await asegurarPerfilesBase();
+        modulos = await obtenerModulosPorPerfil(respuesta.usuario.id_perfil);
+      }
       if (modulos.length === 0) {
         sesion.set(null);
         mensaje = 'Su perfil no tiene módulos asignados. Contacte al administrador.';

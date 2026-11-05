@@ -12,9 +12,26 @@
   let ruta = page.url.pathname;
   afterNavigate(() => (ruta = page.url.pathname));
   $: esLogin = ruta === '/login';
-  $: modulos = $sesion?.modulos || [];
-  // Solo se puede entrar a las rutas que el perfil tiene en la tabla moduloxrol
-  $: permitido = ruta === '/' || modulos.some((m) => m.ruta_url === ruta);
+
+  // Si el usuario es administrador, en el Navbar solo se muestran: Usuarios, Horarios y Notificaciones
+  $: esAdmin =
+    String($sesion?.usuario?.perfil || '').toUpperCase().includes('ADMIN') ||
+    ($sesion?.modulos || []).some((m) => m.ruta_url?.startsWith('/admin'));
+
+  $: modulos = esAdmin
+    ? [
+        { id_modulo: 18, nombre: 'Usuarios', ruta_url: '/admin/usuarios', icono: 'usuarios' },
+        { id_modulo: 16, nombre: 'Horarios', ruta_url: '/admin/horarios', icono: 'horarios' },
+        { id_modulo: 17, nombre: 'Notificaciones', ruta_url: '/admin/notificaciones', icono: 'notificaciones' }
+      ]
+    : $sesion?.modulos || [];
+
+  // Solo se puede entrar a las rutas que el perfil tiene en la tabla moduloxrol (o subrutas de /admin)
+  $: permitido =
+    ruta === '/' ||
+    ruta === '/admin' ||
+    ruta.startsWith('/admin/') ||
+    modulos.some((m) => m.ruta_url === ruta);
 
   // Sin sesión: al login
   $: if (!esLogin && !$sesion?.token) goto('/login');
