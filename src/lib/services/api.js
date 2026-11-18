@@ -35,8 +35,13 @@ export async function procesarRespuesta(respuesta) {
 }
 
 // Funciones genéricas que usan todos los servicios
+// Se usa cache: 'no-store' para evitar que el navegador use redirecciones 301/307 antiguas en caché
 export async function getJSON(ruta) {
-  const respuesta = await fetch(API + ruta, { headers: cabeceras() });
+  const respuesta = await fetch(API + ruta, {
+    method: 'GET',
+    headers: cabeceras(),
+    cache: 'no-store'
+  });
   return await procesarRespuesta(respuesta);
 }
 
@@ -44,6 +49,7 @@ export async function enviarJSON(ruta, metodo, datos) {
   const respuesta = await fetch(API + ruta, {
     method: metodo,
     headers: cabeceras(),
+    cache: 'no-store',
     body: datos === undefined ? undefined : JSON.stringify(datos)
   });
   return await procesarRespuesta(respuesta);

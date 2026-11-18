@@ -13,6 +13,7 @@
   import { obtenerEstudiantes } from '#lib/services/api_estudiante.js';
   import { obtenerMotivos } from '#lib/services/api_motivo.js';
   import { obtenerLlegadas, crearLlegada, actualizarLlegada, eliminarLlegada } from '#lib/services/api_asistencia.js';
+  import { despacharAlertaPorEstudiante } from '#lib/services/api_correo.js';
   import { avisar } from '#lib/stores/avisos.js';
   import { escapar, horaCorta, hoyISO, horaActual, nombreCurso } from '#lib/utils/formato.js';
 
@@ -110,10 +111,18 @@
           observaciones: observaciones || null
         });
         correctos++;
-        if (respuesta.alerta?.notificacion_creada) {
-          avisar(`⚠ ${estudiante.nombres} completó ${respuesta.alerta.total_tardanzas} tardanzas: se generó alerta para el acudiente`, 'alerta', 8000);
-        } else if (respuesta.alerta && !respuesta.alerta.notificacion_creada) {
-          avisar(`⚠ ${estudiante.nombres} completó ${respuesta.alerta.total_tardanzas} tardanzas pero no tiene acudiente registrado`, 'alerta', 8000);
+        const nuevoTotal = respuesta.alerta?.total_tardanzas || (Number(estudiante.total_tardanzas || 0) + 1);
+        if (respuesta.alerta?.notificacion_creada || nuevoTotal >= 3) {
+          try {
+            const envio = await despacharAlertaPorEstudiante({
+              id_estudiante: estudiante.id_estudiante,
+              total_tardanzas: nuevoTotal,
+              correo_destinatario: respuesta.alerta?.correo || null
+            });
+            avisar(`✉ ${estudiante.nombres} completó ${nuevoTotal} tardanzas: correo enviado a ${envio.correo_destinatario}`, 'exito', 8000);
+          } catch (errCorreo) {
+            avisar(`⚠ ${estudiante.nombres} completó ${nuevoTotal} tardanzas, pero no se pudo enviar correo: ${errCorreo.message}`, 'alerta', 8000);
+          }
         }
       } catch (error) {
         avisar(`No se pudo registrar a ${estudiante.nombres}: ${error.message}`, 'error');

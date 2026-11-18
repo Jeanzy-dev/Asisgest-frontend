@@ -13,6 +13,7 @@
   import { obtenerLlegadas, crearLlegada, actualizarLlegada, eliminarLlegada } from '#lib/services/api_asistencia.js';
   import { obtenerEstudiantes } from '#lib/services/api_estudiante.js';
   import { obtenerMotivos } from '#lib/services/api_motivo.js';
+  import { despacharAlertaPorEstudiante } from '#lib/services/api_correo.js';
   import { avisar } from '#lib/stores/avisos.js';
   import { escapar, fechaCorta, horaCorta, hoyISO, horaActual, nombreCurso } from '#lib/utils/formato.js';
 
@@ -91,7 +92,19 @@
       if (formulario.id === null) {
         const r = await crearLlegada(datos);
         avisar(`Llegada registrada (${r.minutos_tarde} min tarde)`);
-        if (r.alerta?.notificacion_creada) avisar('Se generó una alerta para el acudiente', 'alerta', 7000);
+        const nuevoTotal = r.alerta?.total_tardanzas || (Number(formulario.estudiante.total_tardanzas || 0) + 1);
+        if (r.alerta?.notificacion_creada || nuevoTotal >= 3) {
+          try {
+            const envio = await despacharAlertaPorEstudiante({
+              id_estudiante: formulario.estudiante.id_estudiante,
+              total_tardanzas: nuevoTotal,
+              correo_destinatario: r.alerta?.correo || null
+            });
+            avisar(`✉ Alerta enviada por correo a ${envio.correo_destinatario}`, 'exito', 7000);
+          } catch (errCorreo) {
+            avisar(`⚠ Se registró la alerta pero no se pudo enviar el correo: ${errCorreo.message}`, 'alerta', 7000);
+          }
+        }
       } else {
         await actualizarLlegada(formulario.id, datos);
         avisar('Registro actualizado');
