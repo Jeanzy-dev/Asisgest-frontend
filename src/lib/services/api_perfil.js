@@ -2,35 +2,28 @@ import { getJSON, enviarJSON } from './api.js';
 import { obtenerModulos, crearModulo, actualizarModulo } from './api_modulo.js';
 import { obtenerModulosDePerfil, crearModuloXRol } from './api_moduloxrol.js';
 
-// Dirección base del recurso en la API
 const URL_BASE = '/api/perfiles/';
 
-// GET /perfiles/  -> lista de perfiles activos
 export async function obtenerPerfiles() {
   return await getJSON(URL_BASE);
 }
 
-// GET /perfiles/{id}  -> un perfil
 export async function obtenerPerfilPorId(id) {
   return await getJSON(URL_BASE + id);
 }
 
-// POST /perfiles/  -> crea un perfil
 export async function crearPerfil(perfil) {
   return await enviarJSON(URL_BASE, 'POST', perfil);
 }
 
-// PUT /perfiles/{id}  -> actualiza un perfil
 export async function actualizarPerfil(id, perfil) {
   return await enviarJSON(URL_BASE + id, 'PUT', perfil);
 }
 
-// DELETE /perfiles/{id}  -> borrado lógico (estado = false)
 export async function eliminarPerfil(id) {
   return await enviarJSON(URL_BASE + id, 'DELETE');
 }
 
-// Garantiza que los perfiles base (ADMINISTRADOR, COORDINADOR, RECTOR) y sus módulos existan en la BD
 export async function asegurarPerfilesBase() {
   let perfiles = await obtenerPerfiles();
   const requeridos = [
@@ -47,7 +40,7 @@ export async function asegurarPerfilesBase() {
         await crearPerfil(req);
         huboCambios = true;
       } catch {
-        // Ignorar si ya existe
+
       }
     }
   }
@@ -56,7 +49,6 @@ export async function asegurarPerfilesBase() {
     perfiles = await obtenerPerfiles();
   }
 
-  // Asegurar que para ADMINISTRADOR solo estén asignados: Usuarios, Horarios y Notificaciones
   try {
     let modulos = await obtenerModulos();
     const modUsuarios = modulos.find((m) => m.ruta_url === '/admin/usuarios');
@@ -97,7 +89,7 @@ export async function asegurarPerfilesBase() {
       }
     }
   } catch {
-    // Si falla la sincronización de módulos, devolver perfiles igualmente
+
   }
 
   return perfiles;

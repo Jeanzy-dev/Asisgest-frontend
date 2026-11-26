@@ -18,7 +18,6 @@
   let cursos = [];
   let cargando = true;
 
-  // Modal de horario
   let modalHorario = false;
   let idHorarioEditando = null;
   let idCursoElegido = '';
@@ -26,7 +25,6 @@
   let horaCierrePorton = '07:00';
   let toleranciaMinutos = 10;
 
-  // Modal de salón
   let modalCurso = false;
   let idCursoEditando = null;
   let gradoCurso = 10;

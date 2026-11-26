@@ -1,6 +1,5 @@
 <script>
-  // Lista desplegable. "opciones" = [{ valor, texto }].
-  // Así el usuario escoge por nombre y nunca escribe un ID.
+
   export let etiqueta = '';
   export let id = '';
   export let value = '';

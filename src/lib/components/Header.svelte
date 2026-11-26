@@ -10,7 +10,7 @@
       <p>{subtitulo}</p>
     {/if}
   </div>
-  <!-- Espacio para botones a la derecha del título (ej. "Nuevo") -->
+
   <div class="encabezado-acciones"><slot /></div>
 </header>
 

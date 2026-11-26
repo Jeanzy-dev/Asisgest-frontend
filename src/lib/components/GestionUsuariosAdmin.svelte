@@ -30,7 +30,6 @@
   let guardando = false;
   let pestanaActiva = pestanaInicial;
 
-  // Listas cargadas desde la API
   let perfiles = [];
   let usuarios = [];
   let coordinadores = [];
@@ -39,12 +38,10 @@
   let vinculos = [];
   let cursos = [];
 
-  // Estado del modal de creación/edición de usuario
   let modalAbierto = false;
   let modoEdicion = false;
   let rolSeleccionado = 'ESTUDIANTE';
 
-  // Campos para Admin / Rector / Coordinador
   let idUsuarioEditando = null;
   let idCoordinadorEditando = null;
   let nombreCompleto = '';
@@ -53,14 +50,12 @@
   let jornadaCoordinador = 'MAÑANA';
   let telefonoOficina = '';
 
-  // Campos para Estudiante
   let idEstudianteEditando = null;
   let docEstudiante = '';
   let nombresEstudiante = '';
   let apellidosEstudiante = '';
   let idCursoSeleccionado = '';
 
-  // Campos para Acudiente
   let idAcudienteEditando = null;
   let idVinculoEditando = null;
   let docAcudiente = '';
@@ -73,13 +68,11 @@
   let parentescoAcudiente = 'Madre';
   let esPrincipalAcudiente = true;
 
-  // Modal secundario rápido para crear un nuevo salón si hace falta
   let modalSalonAbierto = false;
   let nuevoGrado = 10;
   let nuevoGrupo = 'A';
   let nuevaJornadaSalon = 'MAÑANA';
 
-  // Confirmación de eliminación (borrado lógico)
   let porEliminar = null;
 
   const opcionesRol = [
@@ -112,7 +105,6 @@
     { valor: 'Otro', texto: 'Otro' }
   ];
 
-  // Opciones desplegables de salones existentes
   $: opcionesCursos = cursos.map((c) => ({
     valor: String(c.id_curso),
     texto: `${nombreCurso(c.grado, c.grupo)} — Jornada ${c.jornada}`
@@ -120,7 +112,6 @@
 
   $: cursoActualObjeto = cursos.find((c) => String(c.id_curso) === String(idCursoSeleccionado)) || null;
 
-  // Opciones desplegables de estudiantes existentes para vincular con acudiente
   $: opcionesEstudiantes = estudiantes.map((e) => ({
     valor: String(e.id_estudiante),
     texto: `${e.apellidos} ${e.nombres} — ${nombreCurso(e.grado, e.grupo)} (Doc. ${e.documento})`
@@ -137,7 +128,6 @@
     return mapa[rolClave] || rolClave;
   }
 
-  // Enriquecer usuarios del sistema (Admin, Rector, Coordinador)
   $: listaPersonal = usuarios.map((u) => {
     const coord = coordinadores.find((c) => c.id_usuario === u.id_usuario);
     const rolNorm = normalizarRol(u.perfil);
@@ -150,12 +140,11 @@
       telefono_oficina: coord?.telefono_oficina ?? '',
       nombre_mostrar: u.nombre_completo,
       identificacion_mostrar: u.correo,
-      // En la tabla de "Todos", la columna de detalle solo muestra el rol para Admin, Rector y Coordinador
+
       vinculo_mostrar: nombreLegibleRol(rolNorm)
     };
   });
 
-  // Enriquecer estudiantes con nombre de salón
   $: listaEstudiantes = estudiantes.map((e) => ({
     ...e,
     tipo_entidad: 'ESTUDIANTE',
@@ -166,7 +155,6 @@
     vinculo_mostrar: `Salón ${nombreCurso(e.grado, e.grupo)} (${e.jornada})`
   }));
 
-  // Enriquecer acudientes con sus estudiantes vinculados
   $: listaAcudientes = acudientes.map((a) => {
     const misVinculos = vinculos.filter((v) => v.id_acudiente === a.id_acudiente);
     const principal = misVinculos.find((v) => v.es_principal) || misVinculos[0] || null;
@@ -188,7 +176,6 @@
     };
   });
 
-  // Lista consolidada para la vista "TODOS"
   $: listaTodos = [...listaPersonal, ...listaEstudiantes, ...listaAcudientes];
 
   function normalizarRol(nombrePerfil) {
@@ -211,7 +198,6 @@
     return `<span class="etiqueta ${item.clase}">${escapar(item.texto)}</span>`;
   }
 
-  // Columnas según la pestaña activa
   const columnasTodos = [
     { titulo: 'Rol', campo: 'rol_clave', prioridad: 2, formato: (v) => insigniaRol(v) },
     {
@@ -690,7 +676,6 @@
   </Card>
 {/if}
 
-<!-- Modal principal: Crear o Editar Usuario según Rol -->
 <Modal
   abierto={modalAbierto}
   titulo={modoEdicion ? `Editar ${nombreLegibleRol(rolSeleccionado).toLowerCase()}` : 'Crear nuevo usuario'}
@@ -721,7 +706,6 @@
       </div>
     {/if}
 
-    <!-- FORMULARIO PARA ADMIN, RECTOR Y COORDINADOR -->
     {#if rolSeleccionado === 'ADMINISTRADOR' || rolSeleccionado === 'RECTOR' || rolSeleccionado === 'COORDINADOR'}
       <div class="seccion-campos">
         <p class="subtitulo-seccion">Datos básicos de la cuenta</p>
@@ -776,7 +760,6 @@
         </div>
       {/if}
 
-    <!-- FORMULARIO PARA ESTUDIANTE (vincular a salón existente) -->
     {:else if rolSeleccionado === 'ESTUDIANTE'}
       <div class="seccion-campos">
         <p class="subtitulo-seccion">Datos básicos del estudiante</p>
@@ -832,7 +815,6 @@
         {/if}
       </div>
 
-    <!-- FORMULARIO PARA ACUDIENTE (vincular a estudiante existente) -->
     {:else if rolSeleccionado === 'ACUDIENTE'}
       <div class="seccion-campos">
         <p class="subtitulo-seccion">Datos básicos del acudiente</p>
@@ -950,7 +932,6 @@
   </form>
 </Modal>
 
-<!-- Modal secundario: Crear nuevo salón -->
 <Modal abierto={modalSalonAbierto} titulo="Registrar nuevo salón" on:cerrar={() => (modalSalonAbierto = false)}>
   <form on:submit={guardarNuevoSalon}>
     <div class="rejilla-2">
@@ -965,7 +946,6 @@
   </form>
 </Modal>
 
-<!-- Confirmar eliminación (borrado lógico) -->
 <Confirmar
   abierto={porEliminar !== null}
   mensaje={`¿Desea inactivar a "${porEliminar?.nombre_mostrar}" (${nombreLegibleRol(porEliminar?.rol_clave)})?`}

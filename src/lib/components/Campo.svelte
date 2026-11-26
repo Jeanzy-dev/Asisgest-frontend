@@ -1,5 +1,5 @@
 <script>
-  // Etiqueta + caja de texto. Se usa en todos los formularios.
+
   export let etiqueta = '';
   export let id = '';
   export let tipo = 'text';

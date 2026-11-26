@@ -1,5 +1,5 @@
 <script>
-  // Íconos simples en SVG. El nombre viene del campo "icono" de la tabla modulos.
+
   export let nombre = 'inicio';
   export let tam = 20;
   const trazos = {

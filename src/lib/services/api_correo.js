@@ -71,11 +71,6 @@ export async function obtenerLogsCorreo() {
   return await peticionExpress('/api/logs', 'GET');
 }
 
-/**
- * Recopila la información del estudiante, su acudiente principal y sus últimas 5 llegadas tarde,
- * envía el correo con el template institucional mediante backend-express y actualiza el estado
- * de la notificación en FastAPI a ENVIADO (o FALLIDO).
- */
 export async function despacharAlertaPorEstudiante({
   id_estudiante,
   total_tardanzas = null,
@@ -90,7 +85,6 @@ export async function despacharAlertaPorEstudiante({
     obtenerNotificaciones().catch(() => [])
   ]);
 
-  // Buscar el acudiente vinculado al estudiante (priorizando es_principal)
   const vinculosEst = vinculos.filter((v) => Number(v.id_estudiante) === Number(id_estudiante));
   const vinculoPrincipal = vinculosEst.find((v) => v.es_principal) || vinculosEst[0] || null;
 
@@ -129,10 +123,8 @@ export async function despacharAlertaPorEstudiante({
     ultimos_registros: ultimosRegistros
   };
 
-  // Llamar a la API externa en Express para enviar el correo con el template institucional
   const resultadoCorreo = await enviarCorreoAlerta(payload);
 
-  // Localizar la notificación en FastAPI para marcarla como ENVIADO
   let notifObjetivo = null;
   if (id_notificacion) {
     notifObjetivo = notificaciones.find((n) => Number(n.id_notificacion) === Number(id_notificacion));
@@ -155,9 +147,6 @@ export async function despacharAlertaPorEstudiante({
   return resultadoCorreo;
 }
 
-/**
- * Construye la vista previa HTML del correo para un estudiante dado sin despachar el correo
- */
 export async function construirVistaPreviaEstudiante({
   id_estudiante,
   total_tardanzas = null,

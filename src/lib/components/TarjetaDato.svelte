@@ -1,5 +1,5 @@
 <script>
-  // Tarjeta pequeña con un número importante (indicador)
+
   export let titulo = '';
   export let valor = 0;
   export let detalle = '';

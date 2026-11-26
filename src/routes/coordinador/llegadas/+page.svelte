@@ -1,5 +1,5 @@
 <script>
-  // FUNCIÓN PRINCIPAL DEL PROYECTO: registrar las llegadas tarde en la portería.
+
   import { onMount, onDestroy } from 'svelte';
   import Header from '#lib/components/Header.svelte';
   import Card from '#lib/components/Card.svelte';
@@ -23,7 +23,6 @@
   let cargando = true;
   let guardando = false;
 
-  // Formulario de registro
   let seleccionados = [];
   let idMotivo = '';
   let hora = horaActual();
@@ -44,7 +43,6 @@
     return `<span class="etiqueta ${clase}">${minutos ?? 0} min</span>`;
   }
 
-  // Edición
   let editando = null;
   let porEliminar = null;
 

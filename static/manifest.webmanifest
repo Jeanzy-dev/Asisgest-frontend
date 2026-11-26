@@ -1,0 +1,17 @@
+{
+  "name": "ASISGEST - Control de Llegadas Tarde IETCP",
+  "short_name": "ASISGEST",
+  "description": "Sistema Web y Móvil de Control de Llegadas Tarde - I.E. Técnica Comercial de Ponedera",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#121023",
+  "theme_color": "#121023",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/robots.txt",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

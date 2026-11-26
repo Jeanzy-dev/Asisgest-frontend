@@ -1,5 +1,5 @@
 <script>
-  // Etiqueta de color: exito (verde), alerta (amarillo), peligro (rojo), info (azul)
+
   export let tipo = 'info';
 </script>
 

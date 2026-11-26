@@ -1,10 +1,9 @@
+import adapter from '@sveltejs/adapter-static';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 
 const TARGET_RENDER = 'https://api-colegio-he1h.onrender.com';
-const TARGET_EXPRESS = process.env.VITE_EMAIL_API_URL || 'http://127.0.0.1:3000';
 
-// Plugin para limpiar redirecciones antiguas en caché del navegador (ej. estudiantes-backend-pye7.onrender.com)
 const limpiarCacheRedirecciones = {
   name: 'limpiar-cache-redirecciones',
   configureServer(server) {
@@ -19,29 +18,25 @@ const limpiarCacheRedirecciones = {
 };
 
 export default defineConfig({
-  plugins: [limpiarCacheRedirecciones, sveltekit()],
+  plugins: [
+    limpiarCacheRedirecciones,
+    sveltekit({
+      adapter: adapter({
+        pages: 'build',
+        assets: 'build',
+        fallback: 'index.html',
+        precompress: false,
+        strict: false
+      })
+    })
+  ],
   server: {
+    host: '0.0.0.0',
     proxy: {
       '/api-correo': {
-        target: TARGET_EXPRESS,
+        target: 'http://localhost:3000',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api-correo/, '')
-      },
-      '/api/correos': {
-        target: TARGET_EXPRESS,
-        changeOrigin: true
-      },
-      '/api/envios': {
-        target: TARGET_EXPRESS,
-        changeOrigin: true
-      },
-      '/api/plantillas': {
-        target: TARGET_EXPRESS,
-        changeOrigin: true
-      },
-      '/api/logs': {
-        target: TARGET_EXPRESS,
-        changeOrigin: true
       },
       '/api': {
         target: TARGET_RENDER,
@@ -51,8 +46,6 @@ export default defineConfig({
         protocolRewrite: 'http',
         configure: (proxy) => {
           proxy.on('proxyRes', (proxyRes) => {
-            // Si FastAPI en Render devuelve un Location absoluto, lo convertimos a ruta relativa local
-            // para evitar redirecciones cross-origin que disparen errores de CORS en el navegador.
             const loc = proxyRes.headers['location'];
             if (loc && loc.startsWith(TARGET_RENDER)) {
               proxyRes.headers['location'] = loc.slice(TARGET_RENDER.length) || '/';

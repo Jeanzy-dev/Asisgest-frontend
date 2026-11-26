@@ -1,13 +1,12 @@
 <script>
-  // Busca estudiantes por nombre, documento o curso mientras se escribe.
-  // Se reutiliza en: registrar llegadas (varios a la vez), vínculos de acudientes y notificaciones.
+
   import { createEventDispatcher } from 'svelte';
   import Icono from './Icono.svelte';
   import { nombreCurso } from '#lib/utils/formato.js';
 
   export let estudiantes = [];
   export let etiqueta = 'Buscar estudiante';
-  export let excluir = [];        // ids ya seleccionados (no se repiten)
+  export let excluir = [];
   export let limite = 8;
 
   const dispatch = createEventDispatcher();
@@ -34,7 +33,7 @@
   }
 
   function teclado(evento) {
-    // Enter elige el primer resultado: registro rápido sin usar el mouse
+
     if (evento.key === 'Enter' && resultados.length > 0) {
       evento.preventDefault();
       elegir(resultados[0]);

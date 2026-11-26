@@ -1,5 +1,5 @@
 <script>
-  // Ventana emergente para los formularios de crear/editar
+
   import { createEventDispatcher } from 'svelte';
   import Icono from './Icono.svelte';
 

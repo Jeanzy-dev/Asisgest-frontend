@@ -1,0 +1,19 @@
+{
+  "appId": "co.edu.ietcp.asisgest",
+  "appName": "ASISGEST IETCP",
+  "webDir": "build",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https",
+    "cleartext": true,
+    "allowNavigation": [
+      "api-colegio-he1h.onrender.com",
+      "app.powerbi.com",
+      "*.powerbi.com",
+      "*"
+    ]
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}

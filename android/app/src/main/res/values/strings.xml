@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">ASISGEST IETCP</string>
+    <string name="title_activity_main">ASISGEST IETCP</string>
+    <string name="package_name">co.edu.ietcp.asisgest</string>
+    <string name="custom_url_scheme">co.edu.ietcp.asisgest</string>
+</resources>

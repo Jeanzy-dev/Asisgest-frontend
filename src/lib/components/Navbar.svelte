@@ -1,12 +1,11 @@
 <script>
-  // Barra de navegación. Los enlaces NO están escritos a mano:
-  // llegan en "modulos", que sale de la tabla moduloxrol según el perfil.
+
   import { createEventDispatcher } from 'svelte';
   import Icono from './Icono.svelte';
 
   export let modulos = [];
   export let usuario = null;
-  export let ruta = '';   // ruta actual (la envía el layout)
+  export let ruta = '';
 
   const dispatch = createEventDispatcher();
   let menuAbierto = false;

@@ -1,5 +1,5 @@
 <script>
-  // Confirmación antes de eliminar (reemplaza el confirm() del navegador)
+
   import { createEventDispatcher } from 'svelte';
   import Modal from './Modal.svelte';
 

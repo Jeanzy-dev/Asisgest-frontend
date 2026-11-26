@@ -1,6 +1,5 @@
 import { writable } from 'svelte/store';
 
-
 const CLAVE = 'sesion_llegadas';
 
 function leerSesionGuardada() {
